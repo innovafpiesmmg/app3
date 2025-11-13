@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-R">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Google Forms Automático con Google Apps Script</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de Google Font "Inter" -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Aplicar la fuente Inter como base */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Habilitar desplazamiento suave */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Estilo para el código */
+        pre {
+            white-space: pre-wrap;  /* Ajustar línea de código */
+            word-break: break-all; /* Romper palabras largas */
+        }
+        /* Ocultar la barra de scroll en la medida de lo posible, pero permitir scroll */
+        pre::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #2d3748; /* Color de fondo de la barra de scroll (oscuro) */
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #4a5568; /* Color del "thumb" (más claro) */
+            border-radius: 4px;
+        }
+        pre::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Contenedor principal más ancho para el diseño de 2 columnas -->
+    <div class="container mx-auto max-w-7xl p-4 sm:p-8">
+        
+        <!-- Grid Layout: 1 columna en móvil, 4 columnas en desktop (1 para nav, 3 para contenido) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+            <!-- Columna de Navegación (Oculta en móvil) -->
+            <aside class="hidden md:block md:col-span-1">
+                <!-- Contenedor Sticky para que la navegación se quede fija -->
+                <div class="sticky top-8">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-900">Contenido</h3>
+                    <nav>
+                        <ul class="space-y-1">
+                            <!-- Enlaces de navegación que apuntan a los IDs de las secciones -->
+                            <li><a href="#introduccion" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Introducción</a></li>
+                            <li><a href="#construiremos" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Lo que Construiremos</a></li>
+                            <li><a href="#paso-1" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 1: El Formato</a></li>
+                            <li><a href="#paso-2" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 2: El Proyecto</a></li>
+                            <li><a href="#paso-3" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 3: Código.gs</a></li>
+                            <li><a href="#paso-4" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 4: index.html</a></li>
+                            <li><a href="#paso-5" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 5: Desplegar</a></li>
+                            <li><a href="#paso-6" class="nav-link block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-colors">Paso 6: Usar la App</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Columna de Contenido Principal -->
+            <main class="md:col-span-3">
+                <!-- Contenedor principal del artículo -->
+                <article class="bg-white rounded-lg shadow-xl p-6 sm:p-10">
+        
+                    <!-- Título Principal -->
+                    <header class="mb-8 border-b pb-4">
+                        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                            Cómo Crear un Creador de Google Forms Automático con Google Apps Script
+                        </h1>
+                        <p class="text-lg text-gray-600">
+                            Convierte un simple documento de texto en un formulario o cuestionario funcional en segundos.
+                        </p>
+                    </header>
+        
+                    <!-- Introducción -->
+                    <!-- Se añade un ID para el anclaje de la navegación -->
+                    <section class="mb-8" id="introduccion">
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            ¿Cansado de hacer clic en docenas de botones para crear un cuestionario en Google Forms? ¿Sueñas con una forma de escribir tus preguntas en un simple documento de texto y convertirlas mágicamente en un formulario funcional?
+                        </p>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            ¡Deja de soñar! En esta guía, te enseñaré a construir una <strong>aplicación web personal con Google Apps Script</strong> que hace exactamente eso. Esta herramienta leerá un Documento de Google formateado y generará automáticamente un formulario o un cuestionario autoevaluable, con puntos, respuestas correctas y feedback, todo en menos de 10 segundos.
+                        </p>
+                        <p class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-base">
+                            No necesitas ser un programador experto. Si sabes copiar y pegar, puedes construir esta herramienta en 15 minutos.
+                        </p>
+                    </section>
+        
+                    <!-- Lo que Construiremos -->
+                    <section class="mb-8" id="construiremos">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Lo que Construiremos</h2>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Construiremos una página web simple, alojada en tu propia cuenta de Google, que te pedirá tres cosas:
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 mb-4 pl-4 text-base sm:text-lg">
+                            <li>El ID de la carpeta de Google Drive donde están tus tests.</li>
+                            <li>El ID de la carpeta donde quieres guardar los formularios creados.</li>
+                            <li>Si quieres que sea un formulario simple o un cuestionario con calificación.</li>
+                        </ul>
+                        <p class="text-base sm:text-lg leading-relaxed">
+                            La aplicación leerá tu documento, procesará las preguntas y creará el formulario por ti.
+                        </p>
+                    </section>
+        
+                    <!-- Paso 1: El Formato de Texto -->
+                    <section class="mb-8" id="paso-1">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 1: El "Plano" - El Formato de Texto Mágico (v2.0)</h2>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Para que el script funcione, no podemos escribir de cualquier manera. Necesitamos un "plano" o un formato que la máquina pueda entender. Este formato es increíblemente simple y fácil de usar.
+                        </p>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Crea un nuevo Documento de Google y escribe tu test usando las siguientes etiquetas:
+                        </p>
+                        <ul class="list-none space-y-2 mb-4 pl-4 text-base sm:text-lg">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">T:</code> <strong>Título</strong> del formulario.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">D:</code> <strong>Descripción</strong> del formulario.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">---</code> (Tres guiones): Un <strong>separador</strong> para indicar el final de una pregunta y el comienzo de la siguiente.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">P:</code> Indica una <strong>Pregunta</strong>. Al final de esta línea, debes poner el tipo de pregunta entre corchetes.</li>
+                            <li class="pl-4">Tipos permitidos: <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[multiple]</code>, <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[casilla]</code>, <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[texto]</code>, <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[parrafo]</code>, <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[lista]</code>, <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">[descripcion]</code> (para un salto de sección).</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">-</code> Un guion para una opción de respuesta normal.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">*</code> Un asterisco para la opción de respuesta <strong>correcta</strong>.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">PTS:</code> (Opcional) Los <strong>puntos</strong> que vale la pregunta.</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">F:</code> (Opcional) El <strong>Feedback</strong> o explicación que se mostrará al usuario.</li>
+                        </ul>
+        
+                        <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Plantilla de Ejemplo</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 text-gray-100 text-sm font-mono">
+        <pre>
+        T: Cuestionario de Ejemplo v2.0
+        D: Demuestra tus conocimientos con este ejemplo.
+        ---
+        P: ¿Cuál es la capital de España? [multiple]
+        - Barcelona
+        * Madrid
+        - Sevilla
+        PTS: 5
+        F: ¡Correcto! Madrid es la capital desde 1561.
+        ---
+        P: ¿Qué gases son nobles? [casilla]
+        * Helio
+        * Neón
+        - Oxígeno
+        - Carbono
+        PTS: 10
+        F: Los gases nobles se encuentran en el grupo 18 de la tabla periódica.
+        ---
+        P: ¿En qué año llegó el hombre a la luna? [texto]
+        * 1969
+        PTS: 10
+        ---
+        P: Describe brevemente la fotosíntesis. [parrafo]
+        ---
+        P: Sección de Datos Personales [descripcion]
+        ---
+        P: ¿Cuál es tu fruta favorita? [lista]
+        - Manzana
+        - Pera
+        - Plátano
+        PTS: 1
+        ---
+        </pre>
+                        </div>
+                    </section>
+        
+                    <!-- Paso 2: Crear el Proyecto -->
+                    <section class="mb-8" id="paso-2">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 2: Crear el Proyecto en Google Apps Script</h2>
+                        <ol class="list-decimal list-inside space-y-2 mb-4 pl-4 text-base sm:text-lg">
+                            <li>Ve a <a href="https://script.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">script.google.com</a>.</li>
+                            <li>Haz clic en <strong>"Nuevo proyecto"</strong> en la esquina superior izquierda.</li>
+                            <li>Nombra tu proyecto. Por ejemplo: "Mi Creador de Formularios".</li>
+                            <li>Verás un archivo llamado <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">Código.gs</code>. Este será el "cerebro" de nuestra aplicación.</li>
+                        </ol>
+                    </section>
+        
+                    <!-- Paso 3: Código.gs -->
+                    <section class="mb-8" id="paso-3">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 3: El Código del "Cerebro" (Archivo Código.gs)</h2>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Borra todo el contenido que aparece por defecto en el archivo <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">Código.gs</code> y pega el siguiente código.
+                        </p>
+                        <div class="relative bg-gray-900 rounded-lg shadow-inner text-white">
+                            <button id="copy-btn-gs" onclick="copyCode('code-block-gs', 'copy-btn-gs')"
+                                    class="absolute top-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-1 px-3 rounded-md transition-colors">
+                                Copiar
+                            </button>
+                            <pre id="code-block-gs" class="p-6 text-sm overflow-x-auto"><code class="language-javascript">
+        /**
+         * Sirve la página web principal al usuario.
+         */
+        function doGet() {
+          return HtmlService.createHtmlOutputFromFile('index')
+              .setTitle('Creador de Formularios v2.0')
+              .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+        }
+        
+        /**
+         * Lista los Documentos de Google en la carpeta especificada.
+         * Esta función es llamada desde el JavaScript del lado del cliente (index.html).
+         */
+        function listarDocumentos(folderId) {
+          try {
+            if (!folderId) throw new Error("El ID de la carpeta no puede estar vacío.");
+            const folder = DriveApp.getFolderById(folderId);
+            const files = folder.getFilesByType(MimeType.GOOGLE_DOCS);
+            const fileList = [];
+            while (files.hasNext()) {
+              let file = files.next();
+              fileList.push({ id: file.getId(), name: file.getName() });
+            }
+            if (fileList.length === 0) throw new Error("No se encontraron Documentos de Google en esta carpeta.");
+            return fileList;
+          } catch (e) {
+            // Devuelve el error como un objeto para que el cliente pueda manejarlo.
+            return { error: e.message };
+          }
+        }
+        
+        /**
+         * Función principal que crea el formulario o cuestionario.
+         * Es llamada desde el JavaScript del lado del cliente.
+         *
+         * @param {string} fileId El ID del Documento de Google a procesar.
+         * @param {string} destinationFolderId El ID de la carpeta de destino.
+         * @param {boolean} isQuiz Indica si se debe crear como un cuestionario.
+         */
+        function crearFormularioDesdeDocumento(fileId, destinationFolderId, isQuiz) {
+          try {
+            if (!fileId || !destinationFolderId) throw new Error("Falta el ID del archivo o de la carpeta de destino.");
+            
+            const doc = DocumentApp.openById(fileId);
+            const content = doc.getBody().getText();
+            const blocks = content.split('---').filter(b => b.trim() !== ''); // Divide el texto en bloques por pregunta
+        
+            // El primer bloque es el Título y Descripción
+            const formInfo = blocks.shift().trim().split('\n');
+            const formTitle = formInfo.find(line => line.startsWith('T:')).substring(2).trim();
+            const formDescription = formInfo.find(line => line.startsWith('D:')).substring(2).trim();
+        
+            const form = FormApp.create(formTitle);
+            form.setDescription(formDescription);
+            if (isQuiz) form.setIsQuiz(true); // Convierte el formulario en cuestionario
+        
+            // Procesa cada bloque de pregunta
+            for (const block of blocks) {
+              const lines = block.trim().split('\n');
+              const questionLine = lines.find(l => l.startsWith('P:'));
+              if (!questionLine) continue; // Si el bloque no tiene pregunta, lo salta
+        
+              // Extrae el texto y el tipo de la pregunta
+              const questionTextMatch = questionLine.match(/P:\s*(.*)\s*\[(.*)\]/i);
+              if (!questionTextMatch) continue; // Si la línea de pregunta no tiene el formato correcto, la salta
+        
+              const questionText = questionTextMatch[1].trim();
+              const questionType = questionTextMatch[2].trim().toUpperCase();
+                    
+              let currentItem = null;
+        
+              // 1. Crear el item de formulario según su tipo
+              switch (questionType) {
+                case 'MULTIPLE': currentItem = form.addMultipleChoiceItem(); break;
+                case 'CASILLA': currentItem = form.addCheckboxItem(); break;
+                case 'LISTA': currentItem = form.addListItem(); break;
+                case 'TEXTO': currentItem = form.addTextItem(); break;
+                case 'PARRAFO': currentItem = form.addParagraphTextItem(); break;
+                case 'DESCRIPCION': form.addPageBreakItem().setTitle(questionText); continue; // Es un salto de sección, no hay más lógica
+                default: continue; // Ignorar tipos no reconocidos
+              }
+        
+              currentItem.setTitle(questionText);
+        
+              // Extraer el resto de la información del bloque
+              const options = lines.filter(l => l.startsWith('- ') || l.startsWith('* '));
+              const feedbackLine = lines.find(l => l.startsWith('F:'));
+              const pointsLine = lines.find(l => l.startsWith('PTS:'));
+        
+              // 2. Si es un cuestionario, aplicar puntos y respuestas
+              if (isQuiz) {
+                const canHaveQuizFeatures = ['MULTIPLE', 'CASILLA', 'LISTA', 'TEXTO'].includes(questionType);
+                        
+                // Si no es un tipo calificable (como PARRAFO), simplemente salta esta parte
+                if (canHaveQuizFeatures) {
+                   const points = pointsLine ? parseInt(pointsLine.substring(4).trim(), 10) : 0;
+                  currentItem.setPoints(points);
+        
+                  // 3. Añadir opciones y respuestas correctas
+                  if (options.length > 0) {
+                    if (questionType === 'TEXTO') {
+                      // Para preguntas de texto, usamos validación
+                      const correctAnswer = options[0].substring(2).trim(); // Asume que la primera línea es la respuesta
+                      const validation = FormApp.createTextValidation()
+                        .setHelpText(`La respuesta debe ser: ${correctAnswer}`)
+                        .requireTextMatchesPattern(`^${correctAnswer}$`) // Coincidencia exacta
+                        .build();
+                      currentItem.setValidation(validation);
+                    } else {
+                      // Para multiple, casilla y lista
+                      const choices = options.map(opt => {
+                        const isCorrect = opt.startsWith('* ');
+                        const text = opt.substring(2).trim();
+                        return currentItem.createChoice(text, isCorrect);
+                      });
+                      currentItem.setChoices(choices);
+                    }
+                  }
+                  
+                  // 4. Añadir feedback
+                  if (feedbackLine) {
+                    const feedback = FormApp.createFeedback().setText(feedbackLine.substring(2).trim()).build();
+                    currentItem.setGeneralFeedback(feedback);
+                  }
+                }
+              } else {
+                 // 5. Si NO es un quiz, solo añadir las opciones (sin marcar correctas)
+                if (options.length > 0 && ['MULTIPLE', 'CASILLA', 'LISTA'].includes(questionType)) {
+                  const choices = options.map(opt => opt.substring(2).trim());
+                  currentItem.setChoiceValues(choices); // setChoiceValues en lugar de setChoices
+                }
+              }
+            } // Fin del bucle de bloques
+        
+            // Mover el formulario a la carpeta de destino
+            const formFile = DriveApp.getFileById(form.getId());
+            formFile.moveTo(DriveApp.getFolderById(destinationFolderId));
+                
+            const messageType = isQuiz ? "Cuestionario" : "Formulario";
+            return { success: true, message: `¡${messageType} "${formTitle}" creado con éxito!`, formUrl: form.getEditUrl() };
+        
+          } catch (e) {
+            Logger.log(e.toString());
+            // Devuelve un error claro a la interfaz de usuario
+            return { success: false, message: `Error: ${e.message}` };
+          }
+        }
+        </code></pre>
+                        </div>
+                    </section>
+        
+                    <!-- Paso 4: index.html -->
+                    <section class="mb-8" id="paso-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 4: La Interfaz de Usuario (Archivo index.html)</h2>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Este es el "panel de control" de nuestra aplicación. En el editor de Apps Script, haz clic en el icono <strong>+</strong> (junto a "Archivos"), selecciona <strong>HTML</strong>, y nombra el archivo exactamente <code class="bg-gray-200 px-2 py-1 rounded-md text-sm font-mono">index</code>. Borra el contenido por defecto y pega este código:
+                        </p>
+                        <div class="relative bg-gray-900 rounded-lg shadow-inner text-white">
+                            <button id="copy-btn-html" onclick="copyCode('code-block-html', 'copy-btn-html')"
+                                    class="absolute top-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-1 px-3 rounded-md transition-colors">
+                                Copiar
+                            </button>
+                            <!-- 
+                                IMPORTANTE: Los caracteres < y > han sido escapados a &lt; y &gt; 
+                                para que se muestren como texto en la página web y no sean renderizados por el navegador.
+                                El script de copiado los copiará correctamente.
+                            -->
+                            <pre id="code-block-html" class="p-6 text-sm overflow-x-auto"><code class="language-html">
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;base target="_top"&gt;
+            &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+            &lt;link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet"&gt;
+            &lt;style&gt;
+                :root {
+                    --primary-color: #4285F4;
+                    --success-color: #0F9D58;
+                    --danger-color: #DB4437;
+                    --light-gray: #f1f3f4;
+                    --gray: #e0e0e0;
+                    --dark-gray: #5f6368;
+                    --bg-color: #ffffff;
+                }
+                body {
+                    font-family: 'Roboto', sans-serif;
+                    background-color: var(--light-gray);
+                    color: #202124;
+                    margin: 0;
+                    padding: 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                }
+                #app-container {
+                    width: 100%;
+                    max-width: 600px;
+                    background: var(--bg-color);
+                    border-radius: 8px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                    padding: 28px;
+                    box-sizing: border-box;
+                }
+                h2 {
+                    font-size: 24px;
+                    font-weight: 400;
+                    margin: 0 0 12px 0;
+                    color: var(--primary-color);
+                }
+                p {
+                    font-size: 14px;
+                    color: var(--dark-gray);
+                    margin-bottom: 20px;
+                }
+                .form-group { margin-bottom: 20px; }
+                label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                    font-size: 14px;
+                }
+                input[type="text"], select {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid var(--gray);
+                    border-radius: 4px;
+                    box-sizing: border-box;
+                    font-size: 14px;
+                    transition: border-color 0.2s;
+                }
+                input[type="text"]:focus, select:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                }
+                button {
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background-color 0.2s, box-shadow 0.2s;
+                }
+                .action-button {
+                    background-color: var(--primary-color);
+                    color: white;
+                }
+                .action-button:hover { box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+                .action-button:disabled { background-color: var(--gray); cursor: not-allowed; }
+                #status {
+                    margin-top: 20px;
+                    padding: 12px;
+                    border-radius: 5px;
+                    display: none;
+                    word-break: break-word;
+                    font-size: 14px;
+                }
+                .success { background-color: #e6f4ea; color: var(--success-color); border: 1px solid #b7e1c7; }
+                .error { background-color: #fce8e6; color: var(--danger-color); border: 1px solid #f9c6c2; }
+                #file-selector-group, #submit-group { display: none; }
+                .checkbox-group {
+                    display: flex;
+                    align-items: center;
+                    background-color: #f8f9fa;
+                    padding: 12px;
+                    border-radius: 6px;
+                }
+                .checkbox-group input {
+                    width: auto;
+                    margin-right: 10px;
+                    transform: scale(1.2);
+                }
+                .checkbox-group label {
+                    margin: 0;
+                    font-weight: 400;
+                }
+                #progress-bar {
+                    width: 100%;
+                    background-color: var(--gray);
+                    border-radius: 4px;
+                    overflow: hidden;
+                    height: 8px;
+                    margin-top: 10px;
+                }
+                #progress-bar-inner {
+                    width: 0%;
+                    height: 8px;
+                    background-color: var(--primary-color);
+                    transition: width 0.4s;
+                }
+                #loader { display: none; }
+                #template-link {
+                    font-size: 12px;
+                    text-decoration: none;
+                    color: var(--dark-gray);
+                }
+            &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;div id="app-container"&gt;
+                &lt;h2&gt;Creador de Formularios v2.0 🚀&lt;/h2&gt;
+                &lt;p&gt;Utiliza el nuevo formato de texto (v2.0) para garantizar la creación correcta del formulario o cuestionario.&lt;/p&gt;
+                
+                &lt;!-- PASO 1: Pedir ID de carpeta de origen --&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="sourceFolderId"&gt;1. ID de la Carpeta de Origen&lt;/label&gt;
+                    &lt;input type="text" id="sourceFolderId" placeholder="Pega el ID de la carpeta de origen"&gt;
+                &lt;/div&gt;
+                &lt;button class="action-button" onclick="buscarArchivos()" id="searchButton"&gt;Buscar Documentos&lt;/button&gt;
+                &lt;a id="template-link" href="data:text/plain;charset=utf-8,T:%20Título%20de%20Ejemplo%0AD:%20Descripción%20del%20formulario.%0A---%0AP:%20Pregunta%20de%20opción%20múltiple%20[multiple]%0A-%20Opción%20A%0A*%20Opción%20Correcta%0APTS:%205%0AF:%20Explicación%20de%20la%20respuesta.%0A---%0AP:%20Pregunta%20de%20texto%20[texto]%0A*%20Respuesta%20exacta%0APTS:%2010%0A---" download="plantilla_v2.txt" style="float: right; margin-top: 10px;"&gt;Descargar plantilla v2&lt;/a&gt;
+                
+                &lt;!-- PASO 2: Mostrar selector de archivos --&gt;
+                &lt;div id="file-selector-group" class="form-group"&gt;
+                    &lt;label for="file-selector"&gt;2. Elige el documento a procesar&lt;/label&gt;
+                    &lt;select id="file-selector"&gt;&lt;/select&gt;
+                &lt;/div&gt;
+                
+                &lt;!-- PASO 3: Pedir ID de destino y opciones --&gt;
+                &lt;div id="submit-group" class="form-group"&gt;
+                    &lt;label for="destinationFolderId"&gt;3. ID de la Carpeta de Destino&lt;/label&gt;
+                    &lt;input type="text" id="destinationFolderId" placeholder="Pega el ID de la carpeta de destino"&gt;
+                                
+                    &lt;div class="checkbox-group" style="margin-top: 15px;"&gt;
+                      &lt;input type="checkbox" id="isQuizCheckbox" checked&gt;
+                      &lt;label for="isQuizCheckbox"&gt;Convertir en cuestionario autoevaluable&lt;/label&gt;
+                    &lt;/div&gt;
+                    &lt;button class="action-button" onclick="crearFormulario()" id="createButton" style="margin-top: 15px;"&gt;Crear Formulario&lt;/button&gt;
+                &lt;/div&gt;
+                
+                &lt;!-- Feedback para el usuario --&gt;
+                &lt;div id="loader"&gt;
+                    &lt;p&gt;Procesando, por favor espera...&lt;/p&gt;
+                    &lt;div id="progress-bar"&gt;&lt;div id="progress-bar-inner"&gt;&lt;/div&gt;&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div id="status"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;script&gt;
+                // Referencias a elementos del DOM
+                const searchButton = document.getElementById('searchButton');
+                const createButton = document.getElementById('createButton');
+                const fileSelectorGroup = document.getElementById('file-selector-group');
+                const submitGroup = document.getElementById('submit-group');
+                const loader = document.getElementById('loader');
+                const statusDiv = document.getElementById('status');
+                const progressBar = document.getElementById('progress-bar-inner');
+                        
+                /**
+                 * Llama a la función del servidor 'listarDocumentos'
+                 */
+                function buscarArchivos() {
+                     const sourceFolderId = document.getElementById('sourceFolderId').value;
+                    if (!sourceFolderId) {
+                        mostrarMensaje('Por favor, introduce un ID para la carpeta de origen.', 'error');
+                        return;
+                    }
+                    searchButton.disabled = true;
+                    searchButton.innerText = "Buscando...";
+                    google.script.run
+                        .withSuccessHandler(onFilesFound)
+                        .withFailureHandler(onApiError)
+                        .listarDocumentos(sourceFolderId);
+                }
+        
+                /**
+                 * Callback para cuando se encuentran los archivos.
+                 * Rellena el &lt;select&gt; con los documentos.
+                 */
+                function onFilesFound(files) {
+                     searchButton.disabled = false;
+                    searchButton.innerText = "Buscar Documentos";
+                    if (files.error) {
+                        mostrarMensaje(files.error, 'error');
+                        return;
+                    }
+                    const select = document.getElementById('file-selector');
+                    select.innerHTML = ''; // Limpiar opciones anteriores
+                    files.forEach(file =&gt; {
+                        const option = document.createElement('option');
+                        option.value = file.id;
+                        option.textContent = file.name;
+                        select.appendChild(option);
+                    });
+                    fileSelectorGroup.style.display = 'block';
+                    submitGroup.style.display = 'block';
+                    mostrarMensaje(`Se encontraron ${files.length} documentos. Por favor, elige uno.`, 'success');
+                }
+                        
+                /**
+                 * Llama a la función principal del servidor 'crearFormularioDesdeDocumento'
+                 */
+                function crearFormulario() {
+                    const fileId = document.getElementById('file-selector').value;
+                    const destinationFolderId = document.getElementById('destinationFolderId').value;
+                    const isQuiz = document.getElementById('isQuizCheckbox').checked;
+                    if (!destinationFolderId) {
+                        mostrarMensaje('Por favor, introduce un ID para la carpeta de destino.', 'error');
+                        return;
+                    }
+                    createButton.disabled = true;
+                    loader.style.display = 'block';
+                    statusDiv.style.display = 'none';
+                    progressBar.style.width = '0%';
+                                
+                    // Simular progreso
+                    setTimeout(() =&gt; progressBar.style.width = '50%', 100);
+                    
+                    google.script.run
+                        .withSuccessHandler(onFormCreated)
+                        .withFailureHandler(onApiError)
+                        .crearFormularioDesdeDocumento(fileId, destinationFolderId, isQuiz);
+                }
+                        
+                /**
+                 * Callback para cuando el formulario se ha creado.
+                 */
+                function onFormCreated(result) {
+                      progressBar.style.width = '100%';
+                    setTimeout(() =&gt; {
+                        loader.style.display = 'none';
+                        createButton.disabled = false;
+                        if (result.success) {
+                            mostrarMensaje(`${result.message} &lt;a href="${result.formUrl}" target="_blank"&gt;Abrir formulario para editar&lt;/a&gt;.`, 'success');
+                        } else {
+                            mostrarMensaje(result.message, 'error');
+                        }
+                    }, 500);
+                }
+        
+                /**
+                 * Callback genérico para cualquier error del servidor.
+                 */
+                function onApiError(error) {
+                     searchButton.disabled = false;
+                    searchButton.innerText = "Buscar Documentos";
+                    createButton.disabled = false;
+                    loader.style.display = 'none';
+                    mostrarMensaje('Error inesperado: ' + error.message, 'error');
+                }
+        
+                /**
+                 * Muestra un mensaje de estado (éxito o error) al usuario.
+                 */
+                function mostrarMensaje(mensaje, tipo) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.className = tipo;
+                    statusDiv.innerHTML = mensaje;
+                }
+            &lt;/script&gt;
+        &lt;/body&gt;
+        &lt;/html&gt;
+        </code></pre>
+                        </div>
+                    </section>
+        
+                    <!-- Paso 5: Desplegar -->
+                    <section class="mb-8" id="paso-5">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 5: Desplegar la Aplicación Web</h2>
+                        <p class="mb-4 text-base sm:text-lg leading-relaxed">
+                            Este es el último paso. Vamos a "publicar" la aplicación para que puedas usarla.
+                        </p>
+                        <ol class="list-decimal list-inside space-y-3 mb-4 pl-4 text-base sm:text-lg">
+                            <li>En la esquina superior derecha del editor de Apps Script, haz clic en <strong>"Implementar"</strong> y selecciona <strong>"Nueva implementación"</strong>.</li>
+                            <li>Haz clic en el icono de engranaje (⚙️) junto a "Seleccionar tipo" y elige <strong>"Aplicación web"</strong>.</li>
+                            <li>
+                                Rellena la configuración:
+                                <ul class="list-disc list-inside space-y-2 mt-2 pl-6">
+                                    <li><strong>Descripción:</strong> Escribe algo como <code class="bg-gray-200 px-2 py-1 rounded-md text-sm">Creador de Formularios v2.0</code>.</li>
+                                    <li><strong>Ejecutar como:</strong> Selecciona <strong>"Yo (tu dirección de correo)"</strong>.</li>
+                                    <li><strong>Quién tiene acceso:</strong> Selecciona <strong>"Solo yo"</strong>. (Esto la hace segura y privada).</li>
+                                </ul>
+                            </li>
+                            <li>Haz clic en <strong>"Implementar"</strong>.</li>
+                            <li>
+                                <strong>¡Autorización!</strong> La primera vez, Google te pedirá permisos para que el script pueda gestionar tus archivos de Drive y Forms.
+                                <ul class="list-disc list-inside space-y-2 mt-2 pl-6">
+                                    <li>Haz clic en <strong>"Autorizar acceso"</strong>.</li>
+                                    <li>Elige tu cuenta de Google.</li>
+                                    <li>Verás una advertencia de "Google no ha verificado esta aplicación". Es normal. Haz clic en <strong>"Configuración avanzada"</strong> y luego en <strong>"Ir a (nombre de tu proyecto) (no seguro)"</strong>.</li>
+                                    <li>Revisa los permisos y haz clic en <strong>"Permitir"</strong>.</li>
+                                </ul>
+                            </li>
+                            <li>¡Listo! Se te proporcionará una <strong>URL de la aplicación web</strong>. Esta es la dirección de tu nueva herramienta. Cópiala y guárdala en tus marcadores.</li>
+                        </ol>
+                    </section>
+        
+                    <!-- Paso 6: Usar la Herramienta -->
+                    <section id="paso-6"> <!-- Se quita el mb-8 de la última sección -->
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Paso 6: ¡Usar tu Nueva Herramienta!</h2>
+                        <ol class="list-decimal list-inside space-y-3 mb-4 pl-4 text-base sm:text-lg">
+                            <li>Crea un nuevo Documento de Google con tus preguntas usando el <strong>formato v2.0</strong> que aprendimos en el Paso 1.</li>
+                            <li>Busca los IDs de tus carpetas. El ID es la parte final de la URL en Google Drive: <br> <code class="bg-gray-200 px-2 py-1 rounded-md text-sm text-red-700">https://drive.google.com/drive/folders/[ESTE_ES_EL_ID_DE_LA_CARPETA]</code></li>
+                            <li>Abre la URL de tu aplicación web que copiaste en el paso anterior.</li>
+                            <li>Pega el ID de la carpeta de origen y haz clic en "Buscar Documentos".</li>
+                            <li>Selecciona el documento de tu test en la lista desplegable.</li>
+                            <li>Pega el ID de la carpeta de destino.</li>
+                            <li>Marca (o desmarca) la casilla de "cuestionario".</li>
+                            <li>Haz clic en "Crear Formulario".</li>
+                        </ol>
+                        <p class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg text-base sm:text-lg">
+                            ¡Y ya está! En unos segundos, verás un mensaje de éxito con un enlace directo a tu formulario recién creado, que ya estará guardado en tu carpeta de destino.
+                        </p>
+                    </section>
+        
+                </article>
+            </main>
+        </div>
+    </div>
+
+    <!-- Script para la funcionalidad de Copiar -->
+    <script>
+        function copyCode(preId, buttonId) {
+            // Obtener el elemento <pre>
+            const preElement = document.getElementById(preId);
+            // Obtener el texto de dentro
+            const textToCopy = preElement.innerText;
+
+            // Crear un textarea temporal para poder seleccionar y copiar
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            tempTextArea.setSelectionRange(0, 99999); // Para móviles
+
+            try {
+                // Usar document.execCommand('copy') como se requiere
+                document.execCommand('copy');
+                
+                // Dar feedback al usuario
+                const buttonElement = document.getElementById(buttonId);
+                buttonElement.innerText = '¡Copiado!';
+                buttonElement.classList.add('bg-green-600', 'hover:bg-green-700');
+                buttonElement.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+
+                // Volver al texto original después de 2 segundos
+                setTimeout(() => {
+                    buttonElement.innerText = 'Copiar';
+                    buttonElement.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    buttonElement.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }, 2000);
+
+            } catch (err) {
+                console.error('Error al copiar el texto: ', err);
+                // Opcional: Mostrar error al usuario
+                const buttonElement = document.getElementById(buttonId);
+                buttonElement.innerText = 'Error';
+                setTimeout(() => {
+                    buttonElement.innerText = 'Copiar';
+                }, 2000);
+            }
+
+            // Limpiar el textarea temporal
+            document.body.removeChild(tempTextArea);
+        }
+    </script>
+
+    <!-- Script para la navegación interactiva -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('article section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            // Si no hay links de navegación (ej. vista móvil), no hacer nada
+            if (navLinks.length === 0) return;
+
+            const activeClasses = ['bg-blue-100', 'text-blue-700', 'font-semibold'];
+            const inactiveClasses = ['text-gray-600', 'hover:bg-gray-200'];
+
+            const observerOptions = {
+                root: null, // relativo al viewport
+                rootMargin: '-50px 0px -50% 0px', // Se activa cuando la sección está en la mitad superior de la pantalla
+                threshold: 0 // Apenas sea visible
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+
+                    if (entry.isIntersecting) {
+                        // Resetear todos los enlaces
+                        navLinks.forEach(link => {
+                            link.classList.remove(...activeClasses);
+                            link.classList.add(...inactiveClasses);
+                        });
+                        // Activar el enlace actual
+                        if (activeLink) {
+                            activeLink.classList.add(...activeClasses);
+                            activeLink.classList.remove(...inactiveClasses);
+S
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observar todas las secciones
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Activar el primer enlace por defecto al cargar la página
+            if(navLinks.length > 0) {
+                navLinks[0].classList.add(...activeClasses);
+                navLinks[0].classList.remove(...inactiveClasses);
+            }
+        });
+    </script>
+
+</body>
+</html>
